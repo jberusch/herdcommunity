@@ -70,7 +70,8 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         # if user is already logged in
-        if current_user.is_authenticated:
+        if current_user.is_authenticated and current_user.email == form.email.data:
+            print('User {} is already logged in. Navigating to destinations list'.format(current_user))
             return redirect(url_for('list'))
 
         # log in user, if they exist
@@ -123,6 +124,9 @@ def add_friends():
             friend = User.query.get(int(friend_id))
             print('adding friend ', friend_id)
             current_user.add_friend(friend)
+
+        # TODO: allow unfriending people?
+        
         db.session.commit()
 
         # redirect to list

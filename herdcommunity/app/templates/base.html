@@ -1,22 +1,49 @@
-<html>
-<head>
-    <title>Herd</title>
-    <style>
-        /* 
-            CSS STYLE HERE 
-        */
-    </style>
-</head>
-<body>
-    <div><b>Herd Community</b> <a href="/index">home</a> <a href="/list">list</a> <a href="/login">login</a> <a href="/signup">signup</a> <a href="/add_friends">add frends</a></div>
-    <hr />
-    {% block content %}{% endblock %}
+{% extends 'bootstrap/base.html' %}
 
+{% block title %}
+    Herd
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('index') }}">Herd Community</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('list') }}">Destinations</a></li>
+                    <li><a href="{{ url_for('add_friends') }}">Add Friends</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user %}
+                    <li><a href="/TODO">TODO (Profile?)</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('signup') }}">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>    
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% block app_content %}{% endblock app_content %}
+    </div>
+
+    {% block footer %}
+    <hr />
     <footer>
-        <hr />
-        <div style="display: flex; justify-content: center;">
-            <p>** FOOTER HERE **</p>
-        </div>
+        <div style="text-align: center;">** FOOTER HERE **</div>
     </footer>
-</body>
-</html>
+    {% endblock footer %}
+{% endblock content %}
