@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="POST" action="">
+    <ul class="list-group list-group-flush">
+    {% for u in users %}
+    <li>
+        <input type="checkbox" value="{{ u.user_id }}" name="friend_checkbox" {{ 'checked' if u in current_friends else '' }}>{{ u.name }}</input>
+    </li>
+    {% endfor %}
+    </ul>
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}

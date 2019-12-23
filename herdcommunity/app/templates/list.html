@@ -2,4 +2,21 @@
 
 {% block content %}
 <p>list page</p>
+<p>current user: {{ current_user.name }}</p>
+
+{% for (index, dest) in destinations %}
+<hr />
+<div>
+    <img src="{{ dest.img_src }}"/>
+    <p>{{ dest.name }}</p>
+    <p>{{ dest.address }}</p>
+    <p>Friends Visited: {{ context[index].friends_visited|length }}</p>
+    <p>Times Visited by Friends: {{ context[index].num_visits_by_friends }}</p>
+    <p>Times You've Visited: {{ context[index].num_visits_by_current_user }}</p>
+    <div style="flex-direction: row;">
+        <a href="{{ url_for('change_num_visits', value=-1, dest_index=index) }}"><button>-</button></a>
+        <a href="{{ url_for('change_num_visits', value=1, dest_index=index) }}"><button>+</button></a>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}
