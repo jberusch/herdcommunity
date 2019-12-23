@@ -1,22 +1,26 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<p>list page</p>
-<p>current user: {{ current_user.name }}</p>
-
+<table class="table table-hover">
 {% for (index, dest) in destinations %}
-<hr />
-<div>
-    <img src="{{ dest.img_src }}"/>
-    <p>{{ dest.name }}</p>
-    <p>{{ dest.address }}</p>
-    <p>Friends Visited: {{ context[index].friends_visited|length }}</p>
-    <p>Times Visited by Friends: {{ context[index].num_visits_by_friends }}</p>
-    <p>Times You've Visited: {{ context[index].num_visits_by_current_user }}</p>
-    <div style="flex-direction: row;">
-        <a href="{{ url_for('change_num_visits', value=-1, dest_index=index) }}"><button>-</button></a>
-        <a href="{{ url_for('change_num_visits', value=1, dest_index=index) }}"><button>+</button></a>
-    </div>
-</div>
+    <tr>
+        <td width="70px">
+            <img src="{{ dest.img_src }}"/>
+            <p>{{ dest.name }}</p>
+            <p>{{ dest.address }}</p>        
+        </td>
+        <td>
+            <p>Friends Visited: {{ context[index].friends_visited|length }}</p>
+            <p>Times Visited by Friends: {{ context[index].num_visits_by_friends }}</p>
+        </td>
+        <td>
+            <p>Times You've Visited: {{ context[index].num_visits_by_current_user }}</p>
+            <div style="flex-direction: row;">
+                <a href="{{ url_for('change_num_visits', value=-1, dest_index=index) }}"><button>-</button></a>
+                <a href="{{ url_for('change_num_visits', value=1, dest_index=index) }}"><button>+</button></a>
+            </div>        
+        </td>
+    </tr>
 {% endfor %}
+</table>
 {% endblock %}

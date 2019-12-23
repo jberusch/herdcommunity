@@ -19,6 +19,7 @@ def list():
     # NOTE: Temporarily cutting off 1st 3 elements of array bc there are items
         # that it won't let me remove from DB
     destinations = Destination.query.all()[3:]
+    print(destinations)
     context = []
     for d in destinations:
         tmp = {'num_visits_by_current_user': 0, 'friends_visited': [], 'num_visits_by_friends': 0}
