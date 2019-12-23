@@ -29,7 +29,6 @@ def list():
                 tmp['friends_visited'].append(assoc.user)
                 tmp['num_visits_by_friends'] += assoc.num_visits
         context.append(tmp)
-    print(context)
 
     return render_template('list.html', destinations=enumerate(destinations), context=context)
 
@@ -95,9 +94,14 @@ def signup():
     form = SignupForm()
     if form.validate_on_submit():
         # TODO: if user already exists, send them straight to list
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is not None:
+            print('User {} already exists. Logging them in'.format(user))
+            login_user(user, remember=True)
+            return redirect(url_for('list'))
         
         # register user in database
-        new_user = User(name=form.name.data, email = form.email.data)
+        new_user = User(name=form.name.data, email=form.email.data)
         db.session.add(new_user)
 
         print('registering user: {}'.format(new_user))
@@ -109,20 +113,19 @@ def signup():
 
 @app.route('/add_friends', methods=['GET', 'POST'])
 def add_friends():
-    print()
-
     users = User.query.all()
     users = filter(lambda u: u.user_id != current_user.user_id, users)
 
-    # update friends
-    friend_ids = request.form.getlist('friend_checkbox')
-    for friend_id in friend_ids:
-        print(friend_id)
-        friend = User.query.get(int(friend_id))
-        current_user.add_friend(friend)
-    db.session.commit()
+    # update friends if form submitted
+    if request.method == 'POST':
+        friend_ids = request.form.getlist('friend_checkbox')
+        for friend_id in friend_ids:
+            friend = User.query.get(int(friend_id))
+            print('adding friend ', friend_id)
+            current_user.add_friend(friend)
+        db.session.commit()
 
-    # TODO: flash 'friends list updated!'
-    print('Friends list updated')
+        # redirect to list
+        return redirect(url_for('list'))
 
     return render_template('add_friends.html', users=users, current_friends=current_user.friends)
