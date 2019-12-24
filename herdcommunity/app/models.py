@@ -53,11 +53,11 @@ class User(UserMixin, db.Model):
 class Destination(db.Model):
     __tablename__ = 'destinations'
     destination_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), index=True)
+    name = db.Column(db.String(120), index=True, unique=True)
     img_src = db.Column(db.String(1000))
     region = db.Column(db.String(50))
     yelp_link = db.Column(db.String(150))
-    address = db.Column(db.String(200))
+    # address = db.Column(db.String(200)) # I don't think this is useful
     num_visits = db.Column(db.Integer)
     users = db.relationship('Association', back_populates='destination')
 
