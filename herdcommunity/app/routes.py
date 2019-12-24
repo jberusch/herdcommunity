@@ -4,8 +4,7 @@ from app.forms import SignupForm, LoginForm
 from app.models import User, Destination, Association
 
 # library imports
-import copy
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, jsonify
 from flask_login import current_user, login_user, login_required
 
 @app.route('/')
@@ -13,37 +12,20 @@ from flask_login import current_user, login_user, login_required
 def index():
     return render_template('index.html')
 
-@app.route('/list')
-@login_required
-def list():
-    # NOTE: Temporarily cutting off 1st 3 elements of array bc there are items
-        # that it won't let me remove from DB
-    destinations = Destination.query.all()[3:] # TODO: Remove [3:] for heroku deploy!!!
-    context = []
-    for d in destinations:
-        tmp = {'num_visits_by_current_user': 0, 'friends_visited': [], 'num_visits_by_friends': 0}
-        for assoc in d.users:
-            if assoc.user.user_id == current_user.user_id:
-                tmp['num_visits_by_current_user'] = assoc.num_visits
-            if assoc.user in current_user.friends:
-                tmp['friends_visited'].append(assoc.user)
-                tmp['num_visits_by_friends'] += assoc.num_visits
-        context.append(tmp)
-
-    return render_template('list.html', destinations=enumerate(destinations), context=context)
-
-# TODO: maybe fold this functionality into /list instead of redirecting? (might avoid annoying scrolling to top)
-@app.route('/change_num_visits')
+@app.route('/change_num_visits', methods=['POST'])
 def change_num_visits():
+    destination_id = int(request.form['destination_id'])
+    value = int(request.form['value'])
+
+    dest = Destination.query.get(destination_id)
     # find needed association between user and destination
-    dest_index = int(request.args.get('dest_index'))
-    value = int(request.args.get('value'))
-    dest = Destination.query.all()[3:][dest_index]
     assoc_found = False
+    new_num_visits = 0
     for assoc in dest.users:
         if assoc.user.user_id == current_user.user_id:
-            # update nunmber of visits
+            # update number of visits
             assoc.num_visits = max(assoc.num_visits + value, 0) # ensure value can't go below 0
+            new_num_visits = assoc.num_visits # get value to give back to webpage
             assoc_found = True
             break
             
@@ -56,7 +38,35 @@ def change_num_visits():
         db.session.add(new_assoc)
 
     db.session.commit()
-    return redirect(url_for('list'))
+    return jsonify({'new_num_visits': new_num_visits})
+
+@app.route('/list')
+@login_required
+def list():
+    page_number = request.args.get('page', 1, type=int)
+    destinations_paginated = Destination.query.paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
+    
+    # compile visit numbers for each destination
+    destinations = destinations_paginated.items
+    context = []
+    for d in destinations:
+        tmp = {'num_visits_by_current_user': 0, 'friends_visited': [], 'num_visits_by_friends': 0}
+        for assoc in d.users:
+            if assoc.user.user_id == current_user.user_id:
+                tmp['num_visits_by_current_user'] = assoc.num_visits
+            if assoc.user in current_user.friends:
+                tmp['friends_visited'].append(assoc.user)
+                tmp['num_visits_by_friends'] += assoc.num_visits
+        context.append(tmp)
+
+    # create next and previous URLs for pagination
+    next_url = url_for('list', page=destinations_paginated.next_num) \
+        if destinations_paginated.has_next else None
+    prev_url = url_for('list', page=destinations_paginated.prev_num) \
+        if destinations_paginated.has_prev else None
+
+    return render_template('list.html', destinations=enumerate(destinations), context=context,
+                            next_url=next_url, prev_url=prev_url)
 
 def check_user_exists(username):
     users = User.query.all()

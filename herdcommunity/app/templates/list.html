@@ -1,6 +1,20 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+    const change_num = (dest_id, value) => {
+        console.log(dest_id, value)
+        $.post('/change_num_visits', {
+                destination_id: dest_id,
+                value: value,
+            }).done((response) => {
+                $('#times-user-visited-' + dest_id).text(response['new_num_visits'])
+            }).fail(() => {
+                console.log('error!')
+            });
+    }
+</script>
 <table class="table table-hover">
 {% for (index, dest) in destinations %}
     <tr>
@@ -14,13 +28,24 @@
             <p>Times Visited by Friends: {{ context[index].num_visits_by_friends }}</p>
         </td>
         <td>
-            <p>Times You've Visited: {{ context[index].num_visits_by_current_user }}</p>
+            <p>Times You've Visited: <span id="times-user-visited-{{ dest.destination_id }}">
+                {{ context[index].num_visits_by_current_user }}
+            </span></p>
             <div style="flex-direction: row;">
-                <a href="{{ url_for('change_num_visits', value=-1, dest_index=index) }}"><button>-</button></a>
-                <a href="{{ url_for('change_num_visits', value=1, dest_index=index) }}"><button>+</button></a>
+                <a href="javascript:change_num({{ dest.destination_id }}, -1)"><button>-</button></a>
+                <a href="javascript:change_num({{ dest.destination_id }}, 1)"><button>+</button></a>
             </div>        
         </td>
     </tr>
 {% endfor %}
 </table>
+<div class="text-center">
+    {% if prev_url %}
+        <a href="{{ prev_url }}">Previous</a>
+    {% endif %}
+    |
+    {% if next_url %}
+        <a href="{{ next_url }}">Next</a>
+    {% endif %}
+</div>
 {% endblock %}
