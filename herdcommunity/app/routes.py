@@ -18,8 +18,7 @@ def index():
 def list():
     # NOTE: Temporarily cutting off 1st 3 elements of array bc there are items
         # that it won't let me remove from DB
-    destinations = Destination.query.all()[3:]
-    print(destinations)
+    destinations = Destination.query.all()[3:] # TODO: Remove [3:] for heroku deploy!!!
     context = []
     for d in destinations:
         tmp = {'num_visits_by_current_user': 0, 'friends_visited': [], 'num_visits_by_friends': 0}
@@ -59,10 +58,10 @@ def change_num_visits():
     db.session.commit()
     return redirect(url_for('list'))
 
-def check_user_exists(user_email):
+def check_user_exists(username):
     users = User.query.all()
     for u in users:
-        if u.email and u.email.lower() == user_email:
+        if u.username and u.username.lower() == username:
             return True
     return False
 
@@ -71,14 +70,14 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         # if user is already logged in
-        if current_user.is_authenticated and current_user.email == form.email.data:
+        if current_user.is_authenticated and current_user.username == form.username.data:
             print('User {} is already logged in. Navigating to destinations list'.format(current_user))
             return redirect(url_for('list'))
 
         # log in user, if they exist
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(username=form.username.data).first()
         if user is None:
-            print('Could not find user with email {}'.format(form.email.data))
+            print('Could not find user with username {}'.format(form.username.data))
             # TODO: flash error message
             return redirect(url_for('login'))
         login_user(user, remember=True)
@@ -96,20 +95,21 @@ def signup():
     form = SignupForm()
     if form.validate_on_submit():
         # TODO: if user already exists, send them straight to list
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(username=form.username.data).first()
         if user is not None:
             print('User {} already exists. Logging them in'.format(user))
             login_user(user, remember=True)
             return redirect(url_for('list'))
         
         # register user in database
-        new_user = User(name=form.name.data, email=form.email.data)
+        new_user = User(username=form.username.data, name=form.name.data, email=form.email.data)
         db.session.add(new_user)
 
         print('registering user: {}'.format(new_user))
         db.session.commit()
 
         # after user signs up, send them to page to select friends
+        return redirect(url_for('add_friends'))
 
     return render_template('signup.html', form=form)
 

@@ -2,13 +2,9 @@
 
 {% block app_content %}
 <form method="POST" action="">
-    <ul class="list-group list-group-flush">
     {% for u in users %}
-    <li>
-        <input type="checkbox" value="{{ u.user_id }}" name="friend_checkbox" {{ 'checked' if u in current_friends else '' }}>{{ u.name }}</input>
-    </li>
+        <p><input type="checkbox" value="{{ u.user_id }}" name="friend_checkbox" {{ 'checked' if u in current_friends else '' }}> {{ u.name }}</input></p>
     {% endfor %}
-    </ul>
     <button type="submit">Submit</button>
 </form>
 {% endblock %}

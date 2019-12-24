@@ -25,7 +25,8 @@ class Association(db.Model):
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), index=True)
+    username = db.Column(db.String(80), index=True, unique=True)
+    name = db.Column(db.String(120))
     email = db.Column(db.String(120), index=True, unique=True)
     destinations = db.relationship('Association', back_populates='user')
     friends = db.relationship('User',
@@ -54,6 +55,8 @@ class Destination(db.Model):
     destination_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), index=True)
     img_src = db.Column(db.String(1000))
+    region = db.Column(db.String(50))
+    yelp_link = db.Column(db.String(150))
     address = db.Column(db.String(200))
     num_visits = db.Column(db.Integer)
     users = db.relationship('Association', back_populates='destination')

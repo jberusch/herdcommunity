@@ -6,8 +6,9 @@
     <tr>
         <td width="70px">
             <img src="{{ dest.img_src }}"/>
-            <p>{{ dest.name }}</p>
-            <p>{{ dest.address }}</p>        
+            <h3>{{ dest.name }}</h3>
+            <p>{{ dest.address }}</p>
+            <p><a href="{{ dest.yelp_link }}" target="_blank">More Info</a></p>   
         </td>
         <td>
             <p>Friends Visited: {{ context[index].friends_visited|length }}</p>
