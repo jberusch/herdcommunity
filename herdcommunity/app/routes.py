@@ -44,7 +44,7 @@ def list():
     prev_url = url_for('list', page=destinations_paginated.prev_num) \
         if destinations_paginated.has_prev else None
 
-    return render_template('list.html', destinations=enumerate(destinations), context=context,
+    return render_template('list.html', destinations=enumerate(destinations), context=context, region=region,
                             next_url=next_url, prev_url=prev_url, page_number=page_number, num_dests=app.config['DESTINATIONS_PER_PAGE'])
 
 # change the number of times current user has visited a destination

@@ -1,8 +1,6 @@
 # library imports
 from bs4 import BeautifulSoup
 import requests
-# import readline
-# import code
 
 # local imports
 from app import db

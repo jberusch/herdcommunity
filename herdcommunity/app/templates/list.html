@@ -16,8 +16,8 @@
     }
 </script>
 <div class="text-center">
-    <a href="{{ url_for('list', region='Nashville') }}">Nashville</a> | 
-    <a href="{{ url_for('list', region='Cleveland') }}">Cleveland</a>
+    <a href="{{ url_for('list', region='Nashville') }}" style="text-decoration: {{ 'underline' if region != 'Nashville' else 'none' }};">Nashville</a> | 
+    <a href="{{ url_for('list', region='Cleveland') }}" style="text-decoration: {{ 'underline' if region != 'Cleveland' else 'none' }};">Cleveland</a>
 </div>
 <table class="table table-hover">
 {% for (index, dest) in destinations %}
