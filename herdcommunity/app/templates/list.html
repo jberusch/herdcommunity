@@ -4,7 +4,6 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type=text/javascript>
     const change_num = (dest_id, value) => {
-        console.log(dest_id, value)
         $.post('/change_num_visits', {
                 destination_id: dest_id,
                 value: value,
@@ -13,6 +12,17 @@
             }).fail(() => {
                 console.log('error!')
             });
+    }
+
+    const send_delete_signal = (dest_id) => {
+        $.post('/delete_destination', {
+            destination_id: dest_id
+        }).done(resp => {
+            // do nothing
+            console.log('finished')
+        }).fail(() => {
+            // do nothing
+        })
     }
 </script>
 <div class="text-center">
@@ -44,7 +54,11 @@
             <div style="flex-direction: row;">
                 <a href="javascript:change_num({{ dest.destination_id }}, -1)"><button>-</button></a>
                 <a href="javascript:change_num({{ dest.destination_id }}, 1)"><button>+</button></a>
-            </div>        
+            </div>
+            <br />
+            {% if current_user.username == 'asroth43' or current_user.username == 'jberusch' %}
+                <p><a href="javascript:send_delete_signal({{ dest.destination_id }})">(Remove This Destination)</a></p>
+            {% endif %}
         </td>
     </tr>
 {% endfor %}

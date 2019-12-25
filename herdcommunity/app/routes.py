@@ -2,7 +2,7 @@
 from app import app, db
 from app.forms import SignupForm, LoginForm
 from app.models import User, Destination, Association
-from app.helpers import ulog
+from app.helpers import ulog, delete_log
 
 # library imports
 from operator import attrgetter
@@ -44,7 +44,7 @@ def list():
     prev_url = url_for('list', page=destinations_paginated.prev_num) \
         if destinations_paginated.has_prev else None
 
-    return render_template('list.html', destinations=enumerate(destinations), context=context, region=region,
+    return render_template('list.html', destinations=enumerate(destinations), context=context, region=region, current_user=current_user,
                             next_url=next_url, prev_url=prev_url, page_number=page_number, num_dests=app.config['DESTINATIONS_PER_PAGE'])
 
 # change the number of times current user has visited a destination
@@ -79,6 +79,15 @@ def change_num_visits():
 
     db.session.commit()
     return jsonify({'new_num_visits': new_num_visits})
+
+@app.route('/delete_destination', methods=['POST'])
+def delete_destination():
+    destination_id = int(request.form['destination_id'])
+    dest = Destination.query.get(destination_id)
+    db.session.delete(dest)
+    db.session.commit()
+    ulog('delete_destination -> user {} deleting destination {}'.format(current_user.username, dest))
+    return {}
 
 @app.route('/user/<username>')
 @login_required

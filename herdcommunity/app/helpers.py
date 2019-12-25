@@ -11,3 +11,8 @@ def ulog(msg):
     print('--- ', current_user.username, ' ---- ', date.today(), ' ---', file=fp)
     print(msg, file=fp)
     fp.close()
+
+def delete_log(destination_id):
+    fp = open('destinations_to_delete.txt', 'a')
+    print('User ', current_user.username, 'sent signal to remove destination with id: ', destination_id, file=fp)
+    fp.close()
