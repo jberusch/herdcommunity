@@ -47,7 +47,8 @@ def scrape_one_page(page_content):
             img_src=img_src,
             yelp_link=yelp_link if len(yelp_link) < 150 else BASE_URL,
             region='Nashville',
-            num_visits=0
+            num_visits=0,
+            users=[]
         )
         print(new_dest)
         db.session.add(new_dest)

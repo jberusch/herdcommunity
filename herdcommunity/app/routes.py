@@ -118,6 +118,8 @@ def signup():
     form = SignupForm()
     if form.validate_on_submit():
         # TODO: if user already exists, send them straight to list
+        print('Attempting to sign in user with information: ', form.username.data, form.email.data, form.name.data)
+
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None:
             print('User {} already exists. Logging them in'.format(user))
@@ -125,7 +127,7 @@ def signup():
             return redirect(url_for('list'))
         
         # register user in database
-        new_user = User(username=form.username.data, name=form.name.data, email=form.email.data)
+        new_user = User(username=form.username.data, name=form.name.data, email=form.email.data, friends=[], destinations=[])
         db.session.add(new_user)
 
         print('registering user: {}'.format(new_user))
