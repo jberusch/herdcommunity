@@ -36,12 +36,16 @@ def scrape_one_page(page_content):
                 # get link to yelp page about restaurant
                 yelp_link = BASE_URL + a['href']
                 break
-        
+
+        # only add if entry doesn't exist
+        if Destination.query.filter_by(name=name).first() is None:
+            continue
+
         # package all info into database entry
         new_dest = Destination(
             name=name,
             img_src=img_src,
-            yelp_link=yelp_link,
+            yelp_link=yelp_link if len(yelp_link) < 150 else BASE_URL,
             region='Nashville',
             num_visits=0
         )
