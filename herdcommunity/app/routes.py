@@ -2,6 +2,7 @@
 from app import app, db
 from app.forms import SignupForm, LoginForm
 from app.models import User, Destination, Association
+from app.helpers import ulog
 
 # library imports
 from operator import attrgetter
@@ -16,6 +17,9 @@ def index():
 @app.route('/list')
 @login_required
 def list():
+    # log usage
+    ulog('list -> page access')
+
     page_number = request.args.get('page', 1, type=int)
     region = request.args.get('region', 'Nashville')
     destinations_paginated = Destination.query.filter_by(region=region).order_by(Destination.num_visits.desc()).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
@@ -79,6 +83,9 @@ def change_num_visits():
 @app.route('/user/<username>')
 @login_required
 def user(username):
+    # log usage
+    ulog('user -> page access for username {}'.format(username))
+
     user = User.query.filter_by(username=username).first_or_404()
     destinations = sorted(user.destinations, key=attrgetter('num_visits'), reverse=True)
     
@@ -93,6 +100,7 @@ def check_user_exists(username):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
     form = LoginForm()
     if form.validate_on_submit():
         # if user is already logged in
@@ -104,9 +112,13 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None:
             print('Could not find user with username {}'.format(form.username.data))
+            ulog('login -> failed login by username {}'.format(form.username.data))
             # TODO: flash error message
             return redirect(url_for('login'))
         login_user(user, remember=True)
+
+        # log usage
+        ulog('login -> login by user {}'.format(user))
         
         # redirect user either to list or to previous page
         next_page = request.args.get('next')
@@ -139,6 +151,7 @@ def signup():
         db.session.add(new_user)
 
         print('registering user: {}'.format(new_user))
+        ulog('signup -> new signup by user {}'.format(new_user))
         db.session.commit()
 
         # after user signs up, send them to page to select friends
@@ -148,6 +161,9 @@ def signup():
 
 @app.route('/add_friends', methods=['GET', 'POST'])
 def add_friends():
+    # log usage
+    ulog('add_friends -> page access')
+
     users = User.query.all()
     users = filter(lambda u: u.user_id != current_user.user_id, users)
 
@@ -156,6 +172,7 @@ def add_friends():
         friend_ids = request.form.getlist('friend_checkbox')
         for friend_id in friend_ids:
             friend = User.query.get(int(friend_id))
+            ulog('add_friends -> user {} added friend {}'.format(current_user, friend))
             print('adding friend ', friend_id)
             current_user.add_friend(friend)
 

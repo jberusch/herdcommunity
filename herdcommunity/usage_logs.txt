@@ -1,0 +1,16 @@
+user -> page access for username jberusch
+list -> page access
+add_friends -> page access
+add_friends -> page access
+add_friends -> user <User Joe Berusch> added friend <User Andrew Roth>
+add_friends -> user <User Joe Berusch> added friend <User Other Joe>
+add_friends -> user <User Joe Berusch> added friend <User Jim Bob>
+add_friends -> user <User Joe Berusch> added friend <User Lisa Berusch>
+add_friends -> user <User Joe Berusch> added friend <User test test>
+list -> page access
+---  jberusch  ----  2019-12-25  ---
+list -> page access
+---  jberusch  ----  2019-12-25  ---
+add_friends -> page access
+---  jberusch  ----  2019-12-25  ---
+list -> page access
