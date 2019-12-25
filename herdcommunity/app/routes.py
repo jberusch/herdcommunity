@@ -52,7 +52,7 @@ def change_num_visits():
     dest = Destination.query.get(destination_id)
     # find needed association between user and destination
     assoc_found = False
-    new_num_visits = 0
+    new_num_visits = 1
     for assoc in dest.users:
         if assoc.user.user_id == current_user.user_id:
             # update number of visits
