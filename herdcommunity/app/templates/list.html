@@ -15,6 +15,10 @@
             });
     }
 </script>
+<div class="text-center">
+    <a href="{{ url_for('list', region='Nashville') }}">Nashville</a> | 
+    <a href="{{ url_for('list', region='Cleveland') }}">Cleveland</a>
+</div>
 <table class="table table-hover">
 {% for (index, dest) in destinations %}
     <tr>
@@ -49,7 +53,7 @@
     {% if prev_url %}
         <a href="{{ prev_url }}">Previous</a>
     {% endif %}
-    |
+    | Results {{ (page_number - 1) * 10 + 1 }} - {{ (page_number) * 10 }} |
     {% if next_url %}
         <a href="{{ next_url }}">Next</a>
     {% endif %}

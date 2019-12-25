@@ -16,7 +16,8 @@ def index():
 @login_required
 def list():
     page_number = request.args.get('page', 1, type=int)
-    destinations_paginated = Destination.query.order_by(Destination.num_visits.desc()).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
+    region = request.args.get('region', 'Nashville')
+    destinations_paginated = Destination.query.filter_by(region=region).order_by(Destination.num_visits.desc()).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
     
     # compile visit numbers for each destination
     destinations = destinations_paginated.items
@@ -39,7 +40,7 @@ def list():
         if destinations_paginated.has_prev else None
 
     return render_template('list.html', destinations=enumerate(destinations), context=context,
-                            next_url=next_url, prev_url=prev_url)
+                            next_url=next_url, prev_url=prev_url, page_number=page_number, num_dests=app.config['DESTINATIONS_PER_PAGE'])
 
 # change the number of times current user has visited a destination
 # triggered by +/- buttons in list.html
@@ -127,6 +128,7 @@ def signup():
             return redirect(url_for('list'))
         
         # register user in database
+        # TODO: prevent duplicate emails
         new_user = User(username=form.username.data, name=form.name.data, email=form.email.data, friends=[], destinations=[])
         db.session.add(new_user)
 
@@ -158,4 +160,5 @@ def add_friends():
         # redirect to list
         return redirect(url_for('list'))
 
-    return render_template('add_friends.html', users=users, current_friends=current_user.friends)
+    return render_template('add_friends.html', users=users, 
+                            current_friends=current_user.friends if current_user.friends else [])
