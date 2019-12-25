@@ -26,6 +26,12 @@
         <td>
             <p>Friends Visited: {{ context[index].friends_visited|length }}</p>
             <p>Times Visited by Friends: {{ context[index].num_visits_by_friends }}</p>
+            <p>Visited By:</p>
+            <ul>
+            {% for friend in context[index].friends_visited %}
+                <li><a href="{{ url_for('user', username=friend.username if friend.username else '') }}">{{ friend.name }}</a></li>
+            {% endfor %}
+            </ul>
         </td>
         <td>
             <p>Times You've Visited: <span id="times-user-visited-{{ dest.destination_id }}">

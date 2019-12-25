@@ -1,8 +1,6 @@
 ### Necessary
-* scrape restaurant data from Yelp (Nashville) --> insert into DB (remote)
-* sort destinations by times visited by friends
-* show list of friends that visited each place
-* user profile pages --> shows all the places you've gone, sort by times you've visited
+* scrape restaurant data from Yelp (Nashville) --> insert into DB (completed locally, run on remote)
+* sort destinations by times visited by friends (in progress, currently sorted by total number of visits, might have to paginate manually, which would be annoying)
 * add lots of logging & comments
 
 ### Ideas

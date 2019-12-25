@@ -12,6 +12,37 @@ from flask_login import current_user, login_user, login_required
 def index():
     return render_template('index.html')
 
+@app.route('/list')
+@login_required
+def list():
+    page_number = request.args.get('page', 1, type=int)
+    destinations_paginated = Destination.query.order_by(Destination.num_visits.desc()).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
+    
+    # compile visit numbers for each destination
+    destinations = destinations_paginated.items
+    context = []
+    for d in destinations:
+        tmp = {'num_visits_by_current_user': 0, 'friends_visited': [], 'num_visits_by_friends': 0}
+        for assoc in d.users:
+            if assoc.user.user_id == current_user.user_id:
+                tmp['num_visits_by_current_user'] = assoc.num_visits
+            if assoc.user in current_user.friends:
+                tmp['friends_visited'].append(assoc.user)
+                print(assoc.user.username)
+                tmp['num_visits_by_friends'] += assoc.num_visits
+        context.append(tmp)
+
+    # create next and previous URLs for pagination
+    next_url = url_for('list', page=destinations_paginated.next_num) \
+        if destinations_paginated.has_next else None
+    prev_url = url_for('list', page=destinations_paginated.prev_num) \
+        if destinations_paginated.has_prev else None
+
+    return render_template('list.html', destinations=enumerate(destinations), context=context,
+                            next_url=next_url, prev_url=prev_url)
+
+# change the number of times current user has visited a destination
+# triggered by +/- buttons in list.html
 @app.route('/change_num_visits', methods=['POST'])
 def change_num_visits():
     destination_id = int(request.form['destination_id'])
@@ -25,7 +56,8 @@ def change_num_visits():
         if assoc.user.user_id == current_user.user_id:
             # update number of visits
             assoc.num_visits = max(assoc.num_visits + value, 0) # ensure value can't go below 0
-            new_num_visits = assoc.num_visits # get value to give back to webpage
+            # get value to give back to webpage
+            new_num_visits = assoc.num_visits
             assoc_found = True
             break
             
@@ -34,39 +66,20 @@ def change_num_visits():
         new_assoc = Association(num_visits=max(value, 0))
         new_assoc.user = current_user
         dest.users.append(new_assoc)
-        dest.num_visits = max(dest.num_visits + value, 0)
         db.session.add(new_assoc)
+    
+    # update overall number of visits for destination
+    dest.num_visits = max(dest.num_visits + value, 0)
 
     db.session.commit()
     return jsonify({'new_num_visits': new_num_visits})
 
-@app.route('/list')
+@app.route('/user/<username>')
 @login_required
-def list():
-    page_number = request.args.get('page', 1, type=int)
-    destinations_paginated = Destination.query.paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
     
-    # compile visit numbers for each destination
-    destinations = destinations_paginated.items
-    context = []
-    for d in destinations:
-        tmp = {'num_visits_by_current_user': 0, 'friends_visited': [], 'num_visits_by_friends': 0}
-        for assoc in d.users:
-            if assoc.user.user_id == current_user.user_id:
-                tmp['num_visits_by_current_user'] = assoc.num_visits
-            if assoc.user in current_user.friends:
-                tmp['friends_visited'].append(assoc.user)
-                tmp['num_visits_by_friends'] += assoc.num_visits
-        context.append(tmp)
-
-    # create next and previous URLs for pagination
-    next_url = url_for('list', page=destinations_paginated.next_num) \
-        if destinations_paginated.has_next else None
-    prev_url = url_for('list', page=destinations_paginated.prev_num) \
-        if destinations_paginated.has_prev else None
-
-    return render_template('list.html', destinations=enumerate(destinations), context=context,
-                            next_url=next_url, prev_url=prev_url)
+    return render_template('user.html', user=user, destinations=user.destinations)
 
 def check_user_exists(username):
     users = User.query.all()

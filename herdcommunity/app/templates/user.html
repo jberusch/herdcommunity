@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>User: {{ user.username }}</h1>
+    <hr>
+    <ul>
+    {% for assoc in destinations %}
+        <li>{{ assoc.destination.name }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
