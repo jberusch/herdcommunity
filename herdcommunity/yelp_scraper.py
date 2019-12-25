@@ -38,7 +38,7 @@ def scrape_one_page(page_content):
                 break
 
         # only add if entry doesn't exist
-        if Destination.query.filter_by(name=name).first() is None:
+        if Destination.query.filter_by(name=name).first() is not None:
             continue
 
         # package all info into database entry
