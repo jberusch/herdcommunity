@@ -3,9 +3,18 @@
 {% block app_content %}
     <h1>User: {{ user.username }}</h1>
     <hr>
-    <ul>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Destination</th>
+                <th class="text-center">Times Visited</th>
+            </tr>
+        </thead>
     {% for assoc in destinations %}
-        <li>{{ assoc.destination.name }}</li>
+        <tr>
+            <td>{{ assoc.destination.name }}</td>
+            <td class="text-center">{{ assoc.num_visits }}</td>
+        </tr>
     {% endfor %}
-    </ul>
+    </table>
 {% endblock %}

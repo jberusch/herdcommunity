@@ -4,6 +4,7 @@ from app.forms import SignupForm, LoginForm
 from app.models import User, Destination, Association
 
 # library imports
+from operator import attrgetter
 from flask import render_template, request, redirect, url_for, jsonify
 from flask_login import current_user, login_user, login_required
 
@@ -79,8 +80,9 @@ def change_num_visits():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
+    destinations = sorted(user.destinations, key=attrgetter('num_visits'), reverse=True)
     
-    return render_template('user.html', user=user, destinations=user.destinations)
+    return render_template('user.html', user=user, destinations=destinations)
 
 def check_user_exists(username):
     users = User.query.all()
@@ -126,9 +128,13 @@ def signup():
             print('User {} already exists. Logging them in'.format(user))
             login_user(user, remember=True)
             return redirect(url_for('list'))
+
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is not None:
+            print('There is already an account with the email {}'.format(form.email.data))
+            # TODO: Flash message
         
         # register user in database
-        # TODO: prevent duplicate emails
         new_user = User(username=form.username.data, name=form.name.data, email=form.email.data, friends=[], destinations=[])
         db.session.add(new_user)
 
