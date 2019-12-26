@@ -34,7 +34,6 @@ def list():
                 tmp['num_visits_by_current_user'] = assoc.num_visits
             if assoc.user in current_user.friends:
                 tmp['friends_visited'].append(assoc.user)
-                print(assoc.user.username)
                 tmp['num_visits_by_friends'] += assoc.num_visits
         context.append(tmp)
 
