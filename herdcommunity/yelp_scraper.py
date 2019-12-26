@@ -62,5 +62,7 @@ def scrape_n_pages(search_term, region, n, step):
         scrape_one_page(content, region)
     db.session.commit()
 
+# print('======== Scraping restaurants for Nashville ========')
 # scrape_n_pages(NASHVILLE_SEARCH_TERM, 'Nashville', 138, 10)
-scrape_n_pages(CLEVELAND_SEARCH_TERM, 'Cleveland', 10, 30)
+# print('\n\n======== Scraping restaurants for Cleveland ========')
+# scrape_n_pages(CLEVELAND_SEARCH_TERM, 'Cleveland', 10, 30)
