@@ -56,7 +56,7 @@
                 <a href="javascript:change_num({{ dest.destination_id }}, 1)"><button>+</button></a>
             </div>
             <br />
-            {% if current_user.username == 'asroth43' or current_user.username == 'jberusch' %}
+            {% if current_user.username == 'andrew' or current_user.username == 'jberusch' %}
                 <p><a href="javascript:send_delete_signal({{ dest.destination_id }})">(Remove This Destination)</a></p>
             {% endif %}
         </td>

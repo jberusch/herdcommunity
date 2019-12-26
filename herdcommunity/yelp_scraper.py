@@ -39,6 +39,9 @@ def scrape_one_page(page_content, region):
         # only add if entry doesn't exist
         if Destination.query.filter_by(name=name).first() is not None:
             continue
+        # only add if restaurant has a name
+        if len(name) < 1:
+            continue
 
         # package all info into database entry
         new_dest = Destination(
@@ -52,11 +55,12 @@ def scrape_one_page(page_content, region):
         print(new_dest)
         db.session.add(new_dest)
 
-def scrape_n_pages(n):
+def scrape_n_pages(search_term, region, n, step):
     for i in range(n):
-        resp = requests.get(BASE_URL + NASHVILLE_SEARCH_TERM + str(i * 10), timeout=5)
+        resp = requests.get(BASE_URL + search_term + str(i * step), timeout=5)
         content = BeautifulSoup(resp.content, "html.parser")
-        scrape_one_page(content, 'Nashville')
+        scrape_one_page(content, region)
     db.session.commit()
 
-scrape_n_pages(138)
+# scrape_n_pages(NASHVILLE_SEARCH_TERM, 'Nashville', 138, 10)
+scrape_n_pages(CLEVELAND_SEARCH_TERM, 'Cleveland', 10, 30)
