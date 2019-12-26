@@ -8,7 +8,7 @@ from flask_login import current_user
 
 @app.errorhandler(404)
 def not_found_error(error):
-    ulog('404 -> encounted by {}'.format(current_user))
+    # ulog('404 -> encounted by {}'.format(current_user))
     return render_template('404.html'), 404
 
 @app.errorhandler(500)
