@@ -8,7 +8,7 @@ from app.helpers import ulog, delete_log
 from operator import attrgetter
 from werkzeug.urls import url_parse
 from flask import render_template, request, redirect, url_for, jsonify
-from flask_login import current_user, login_user, login_required
+from flask_login import current_user, login_user, login_required, logout_user
 
 @app.route('/')
 @app.route('/index')
@@ -167,6 +167,11 @@ def signup():
         return redirect(url_for('add_friends'))
 
     return render_template('signup.html', form=form)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 @app.route('/add_friends', methods=['GET', 'POST'])
 def add_friends():
