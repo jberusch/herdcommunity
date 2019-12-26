@@ -39,9 +39,9 @@ def list():
         context.append(tmp)
 
     # create next and previous URLs for pagination
-    next_url = url_for('list', page=destinations_paginated.next_num) \
+    next_url = url_for('list', page=destinations_paginated.next_num, region=region) \
         if destinations_paginated.has_next else None
-    prev_url = url_for('list', page=destinations_paginated.prev_num) \
+    prev_url = url_for('list', page=destinations_paginated.prev_num, region=region) \
         if destinations_paginated.has_prev else None
 
     return render_template('list.html', destinations=enumerate(destinations), context=context, region=region, current_user=current_user,
