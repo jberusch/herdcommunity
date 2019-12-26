@@ -6,6 +6,7 @@ from app.helpers import ulog, delete_log
 
 # library imports
 from operator import attrgetter
+from werkzeug.urls import url_parse
 from flask import render_template, request, redirect, url_for, jsonify
 from flask_login import current_user, login_user, login_required
 
@@ -24,7 +25,7 @@ def list():
     region = request.args.get('region', 'Nashville')
     destinations_paginated = Destination.query.filter_by(region=region).order_by(Destination.num_visits.desc()).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
     
-    # compile visit numbers for each destination
+    # # compile visit numbers for each destination
     destinations = destinations_paginated.items
     context = []
     for d in destinations:
