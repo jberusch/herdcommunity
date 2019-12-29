@@ -46,7 +46,16 @@
         gtag('config', 'UA-154977132-1');
     </script>
     <div class="container">
-        {% block app_content %}{% endblock app_content %}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    {% block app_content %}{% endblock app_content %}
     </div>
 
     {% block footer %}
