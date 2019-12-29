@@ -7,8 +7,8 @@ from app.helpers import ulog, delete_log
 # library imports
 from operator import attrgetter
 from werkzeug.urls import url_parse
-from flask import render_template, request, redirect, url_for, jsonify
 from flask_login import current_user, login_user, login_required, logout_user
+from flask import render_template, request, redirect, url_for, jsonify, flash
 
 @app.route('/')
 @app.route('/index')
@@ -146,25 +146,27 @@ def signup():
 
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None:
-            print('User {} already exists. Logging them in'.format(user))
-            login_user(user, remember=True)
-            return redirect(url_for('list'))
+            msg = 'There is already an account with the username {}'.format(form.username.data)            
+            print(msg)
+            flash(msg)
+            return redirect(url_for('signup'))
 
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None:
-            print('There is already an account with the email {}'.format(form.email.data))
-            # TODO: Flash message
+            msg = 'There is already an account with the email {}'.format(form.email.data)
+            print(msg)
+            flash(msg)
+            return redirect(url_for('signup'))
         
         # register user in database
         new_user = User(username=form.username.data, name=form.name.data, email=form.email.data, friends=[], destinations=[])
         db.session.add(new_user)
-
         print('registering user: {}'.format(new_user))
-        ulog('signup -> new signup by user {}'.format(new_user))
         db.session.commit()
 
         # log in new user
         login_user(new_user, remember=True)
+        ulog('signup -> new signup by user {}'.format(new_user))
 
         # after user signs up, send them to page to select friends
         return redirect(url_for('add_friends'))

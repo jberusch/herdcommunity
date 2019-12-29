@@ -182,3 +182,9 @@ signup -> new signup by user <User Lily Roth>
 add_friends -> page access
 ---  lily  ----  2019-12-28  ---
 list -> page access
+---  jberusch  ----  2019-12-28  ---
+login -> login by user <User Joe Berusch>
+---  jberusch  ----  2019-12-28  ---
+list -> page access
+---  jberusch  ----  2019-12-28  ---
+add_friends -> page access
