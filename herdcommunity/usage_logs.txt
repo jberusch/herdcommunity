@@ -174,3 +174,11 @@ list -> page access
 list -> page access
 ---  jberusch  ----  2019-12-26  ---
 list -> page access
+---  jberusch  ----  2019-12-26  ---
+list -> page access
+---  anonymous  ----  2019-12-28  ---
+signup -> new signup by user <User Lily Roth>
+---  anonymous  ----  2019-12-28  ---
+add_friends -> page access
+---  lily  ----  2019-12-28  ---
+list -> page access

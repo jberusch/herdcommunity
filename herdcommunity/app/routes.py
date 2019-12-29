@@ -163,6 +163,9 @@ def signup():
         ulog('signup -> new signup by user {}'.format(new_user))
         db.session.commit()
 
+        # log in new user
+        login_user(new_user, remember=True)
+
         # after user signs up, send them to page to select friends
         return redirect(url_for('add_friends'))
 
