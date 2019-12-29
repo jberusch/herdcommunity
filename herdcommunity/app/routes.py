@@ -179,6 +179,7 @@ def logout():
     return redirect(url_for('index'))
 
 @app.route('/add_friends', methods=['GET', 'POST'])
+@login_required
 def add_friends():
     # log usage
     ulog('add_friends -> page access')
