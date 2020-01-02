@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+<div class="container">
     <h1>User: {{ user.username }}</h1>
     <hr>
     <table class="table table-hover table-striped">
@@ -17,4 +18,5 @@
         </tr>
     {% endfor %}
     </table>
+</div>
 {% endblock %}

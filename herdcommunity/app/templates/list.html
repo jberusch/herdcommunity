@@ -25,57 +25,59 @@
         })
     }
 </script>
-<div class="text-center">
-    <a href="{{ url_for('list', region='Nashville') }}" style="text-decoration: {{ 'underline' if region != 'Nashville' else 'none' }};">Nashville</a> | 
-    <a href="{{ url_for('list', region='Cleveland') }}" style="text-decoration: {{ 'underline' if region != 'Cleveland' else 'none' }};">Cleveland</a>
-</div>
-<br />
+<div class="container">
+    <div>
+        <a href="{{ url_for('list', region='Nashville') }}" style="text-decoration: {{ 'underline' if region != 'Nashville' else 'none' }};">Nashville</a> | 
+        <a href="{{ url_for('list', region='Cleveland') }}" style="text-decoration: {{ 'underline' if region != 'Cleveland' else 'none' }};">Cleveland</a>
+    </div>
+    <br />
 
-<table class="table table-hover table-responsive">
-{% for (index, dest) in destinations %}
-    <tr>
-        <td>
-            <img src="{{ dest.img_src }}" class="img-rounded img-thumbnail img-fluid"/>
-            <h3><a href="{{ dest.yelp_link }}" target="_blank">{{ dest.name }}</a></h3>
-            <!-- <p><a href="{{ dest.yelp_link }}" target="_blank">More Info</a></p> -->
-        </td>
-        <td>
-            <p><strong>Friends Visited</strong> {{ context[index].friends_visited|length }}</p>
-            <p><strong>Times Visited by Friends</strong> {{ context[index].num_visits_by_friends }}</p>
-            <p><strong>Visited By</strong> {{ 'Nobody :(' if context[index].friends_visited == [] else '' }}</p>
-            <ul>
-            {% for friend in context[index].friends_visited %}
-                <li><a href="{{ url_for('user', username=friend.username if friend.username else '') }}">{{ friend.name }}</a></li>
-            {% endfor %}
-            </ul>
-        </td st>
-        <td>
-            <p><strong>Times You've Visited</strong>
-                <span id="times-user-visited-{{ dest.destination_id }}">{{ context[index].num_visits_by_current_user }}</span>
-            </p>
-            <div style="flex-direction: row;">
-                <a href="javascript:change_num({{ dest.destination_id }}, -1)">
-                    <button class="btn btn-danger">-</button>
-                </a>
-                <a href="javascript:change_num({{ dest.destination_id }}, 1)">
-                    <button class="btn btn-success">+</button>
-                </a>
-            </div>
-            <br />
-            {% if current_user.username == 'andrew' or current_user.username == 'jberusch' %}
-                <p><a href="javascript:send_delete_signal({{ dest.destination_id }})">(Remove This Destination)</a></p>
-            {% endif %}
-        </td st>
-    </tr>
-{% endfor %}
-</table>
-<div class="text-center">
-    {% if prev_url %}
-        <a href="{{ prev_url }}">Previous</a>
-    {% endif %}
-    | Results {{ (page_number - 1) * 10 + 1 }} - {{ (page_number) * 10 }} |
-    {% if next_url %}
-        <a href="{{ next_url }}">Next</a>
-    {% endif %}
+    <table class="table table-hover table-responsive">
+    {% for (index, dest) in destinations %}
+        <tr>
+            <td>
+                <img src="{{ dest.img_src }}" class="img-rounded img-thumbnail img-fluid"/>
+                <h3><a href="{{ dest.yelp_link }}" target="_blank">{{ dest.name }}</a></h3>
+                <!-- <p><a href="{{ dest.yelp_link }}" target="_blank">More Info</a></p> -->
+            </td>
+            <td>
+                <p><strong>Friends Visited</strong> {{ context[index].friends_visited|length }}</p>
+                <p><strong>Times Visited by Friends</strong> {{ context[index].num_visits_by_friends }}</p>
+                <p><strong>Visited By</strong> {{ 'Nobody :(' if context[index].friends_visited == [] else '' }}</p>
+                <ul>
+                {% for friend in context[index].friends_visited %}
+                    <li><a href="{{ url_for('user', username=friend.username if friend.username else '') }}">{{ friend.name }}</a></li>
+                {% endfor %}
+                </ul>
+            </td st>
+            <td>
+                <p><strong>Times You've Visited</strong>
+                    <span id="times-user-visited-{{ dest.destination_id }}">{{ context[index].num_visits_by_current_user }}</span>
+                </p>
+                <div style="flex-direction: row;">
+                    <a href="javascript:change_num({{ dest.destination_id }}, -1)">
+                        <button class="btn btn-danger">-</button>
+                    </a>
+                    <a href="javascript:change_num({{ dest.destination_id }}, 1)">
+                        <button class="btn btn-success">+</button>
+                    </a>
+                </div>
+                <br />
+                {% if current_user.username == 'andrew' or current_user.username == 'jberusch' %}
+                    <p><a href="javascript:send_delete_signal({{ dest.destination_id }})">(Remove This Destination)</a></p>
+                {% endif %}
+            </td st>
+        </tr>
+    {% endfor %}
+    </table>
+    <div>
+        {% if prev_url %}
+            <a href="{{ prev_url }}">Previous</a>
+        {% endif %}
+        | Results {{ (page_number - 1) * 10 + 1 }} - {{ (page_number) * 10 }} |
+        {% if next_url %}
+            <a href="{{ next_url }}">Next</a>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

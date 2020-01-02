@@ -17,11 +17,9 @@
                 <a class="navbar-brand" href="{{ url_for('index') }}">Herd</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav navbar-right">
                     <li><a href="{{ url_for('list') }}">Destinations</a></li>
                     <li><a href="{{ url_for('add_friends') }}">Add Friends</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('user', username=current_user.username) }}">{{ current_user.name }}</a></li>
                     <li><a href="{{ url_for('logout') }}">Log Out</a></li>
@@ -46,8 +44,25 @@
         gtag('config', 'UA-154977132-1');
     </script>
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/base.css') }}">
+    <style>
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+        body {
+            /* Margin bottom by footer height */
+            margin-bottom: 91px;
+        }
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            /* Set the fixed height of the footer here */
+            height: 91px;
+        }
+    </style>
 
-    <div class="container">
+    <div class="container text-center">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>
@@ -58,15 +73,14 @@
         {% endif %}
         {% endwith %}
     {% block app_content %}{% endblock app_content %}
+    <br />
     </div>
 
     {% block footer %}
-    <hr />
-    <footer>
+    <div class="footer">
+        <hr style="width: 80%; border-top: 1px solid darkorange;"/>
         <div class="text-center">
             <p>Welcome to the Herd Community</p>
-            <hr style="width: 150px; border-top: 1px solid darkorange;"/>
-            <p>Joe Berusch | Andrew Roth</p>
         </div>
     </footer>
     <br />

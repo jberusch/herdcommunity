@@ -9,7 +9,8 @@ from app.models import Destination
 
 BASE_URL = 'https://www.yelp.com/'
 NASHVILLE_SEARCH_TERM = 'search?find_desc=&find_near=vanderbilt-university-nashville-4&start=' # needs multiple of 10 (starting at 0) added to end
-CLEVELAND_SEARCH_TERM = 'search?find_desc=restaurants&find_loc=Shaker%20Heights%2C%20OH&ns=1&start='
+CLEVELAND_SHAKER_SEARCH_TERM = 'search?find_desc=restaurants&find_loc=Shaker%20Heights%2C%20OH&ns=1&start='
+CLEVELAND_DOWNTOWN_SEARCH_TERM = 'search?find_desc=Restaurants&find_loc=Cleveland%2C%20OH&ns=1&start='
 
 # scrape one page of results (they're paginated)
 def scrape_one_page(page_content, region):
@@ -38,6 +39,7 @@ def scrape_one_page(page_content, region):
 
         # only add if entry doesn't exist
         if Destination.query.filter_by(name=name).first() is not None:
+            print('Restaurant {} already exists. Not adding to DB.'.format(name))
             continue
         # only add if restaurant has a name
         if len(name) < 1:
@@ -64,5 +66,7 @@ def scrape_n_pages(search_term, region, n, step):
 
 # print('======== Scraping restaurants for Nashville ========')
 # scrape_n_pages(NASHVILLE_SEARCH_TERM, 'Nashville', 138, 10)
-# print('\n\n======== Scraping restaurants for Cleveland ========')
-# scrape_n_pages(CLEVELAND_SEARCH_TERM, 'Cleveland', 10, 30)
+# print('\n\n======== Scraping restaurants for Cleveland (starting from Shaker Heights) ========')
+# scrape_n_pages(CLEVELAND_SHAKER_SEARCH_TERM, 'Cleveland', 10, 30)
+print('\n\n======== Scraping more restaurants for Cleveland (starting from downtown) ========')
+scrape_n_pages(CLEVELAND_DOWNTOWN_SEARCH_TERM, 'Cleveland', 60, 30)

@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<form method="POST" action="">
-    {% for u in users %}
-        <p><input type="checkbox" value="{{ u.user_id }}" name="friend_checkbox" {{ 'checked' if u in current_friends else '' }}> {{ u.name }}</input></p>
-    {% endfor %}
-    <button type="submit">Submit</button>
-</form>
+<div class="container">
+    <h1>Add Your Friends!</h1>
+    <form method="POST" action="">
+        {% for u in users %}
+            <p><input type="checkbox" value="{{ u.user_id }}" name="friend_checkbox" {{ 'checked' if u in current_friends else '' }}> {{ u.name }}</input></p>
+        {% endfor %}
+        <br />
+        <button type="submit">Submit</button>
+    </form>
+</div>
 {% endblock %}
