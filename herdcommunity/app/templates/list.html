@@ -27,8 +27,8 @@
 </script>
 <div class="container">
     <div>
-        <a href="{{ url_for('list', region='Nashville') }}" style="text-decoration: {{ 'underline' if region != 'Nashville' else 'none' }};">Nashville</a> | 
-        <a href="{{ url_for('list', region='Cleveland') }}" style="text-decoration: {{ 'underline' if region != 'Cleveland' else 'none' }};">Cleveland</a>
+        <a href="{{ url_for('list', region='Nashville') }}" style="text-decoration: {{ 'underline' if region == 'Nashville' else 'none' }};">Nashville</a> | 
+        <a href="{{ url_for('list', region='Cleveland') }}" style="text-decoration: {{ 'underline' if region == 'Cleveland' else 'none' }};">Cleveland</a>
     </div>
     <br />
 
