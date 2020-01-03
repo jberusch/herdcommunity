@@ -40,7 +40,7 @@
                 <h3><a href="{{ dest.yelp_link }}" target="_blank">{{ dest.name }}</a></h3>
                 <!-- <p><a href="{{ dest.yelp_link }}" target="_blank">More Info</a></p> -->
             </td>
-            <td>
+            <td class="text-left">
                 <p><strong>Friends Visited</strong> {{ context[index].friends_visited|length }}</p>
                 <p><strong>Times Visited by Friends</strong> {{ context[index].num_visits_by_friends }}</p>
                 <p><strong>Visited By</strong> {{ 'Nobody :(' if context[index].friends_visited == [] else '' }}</p>

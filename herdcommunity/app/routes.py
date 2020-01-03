@@ -25,10 +25,6 @@ def list():
     region = request.args.get('region', 'Nashville')
     destinations_paginated = Destination.query.filter_by(region=region).order_by(Destination.num_visits.desc()).order_by(Destination.destination_id).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
     
-    # DEBUG
-    for d in destinations_paginated.items:
-        print(d.name)
-
     # compile visit numbers for each destination
     destinations = destinations_paginated.items
     context = []
