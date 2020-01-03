@@ -23,7 +23,7 @@ def list():
 
     page_number = request.args.get('page', 1, type=int)
     region = request.args.get('region', 'Nashville')
-    destinations_paginated = Destination.query.filter_by(region=region).order_by(Destination.num_visits.desc()).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
+    destinations_paginated = Destination.query.filter_by(region=region).order_by(Destination.num_visits.desc()).order_by(Destination.destination_id).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
     
     # DEBUG
     for d in destinations_paginated.items:
