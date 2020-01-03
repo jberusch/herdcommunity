@@ -34,7 +34,7 @@ def scrape_one_page(page_content, region):
                 # get name of restaurant
                 name = a['name']
                 # get link to yelp page about restaurant
-                yelp_link = BASE_URL + a['href']
+                yelp_link = BASE_URL[:21] + a['href']
                 break
 
         # only add if entry doesn't exist
@@ -68,5 +68,5 @@ def scrape_n_pages(search_term, region, n, step):
 # scrape_n_pages(NASHVILLE_SEARCH_TERM, 'Nashville', 138, 10)
 # print('\n\n======== Scraping restaurants for Cleveland (starting from Shaker Heights) ========')
 # scrape_n_pages(CLEVELAND_SHAKER_SEARCH_TERM, 'Cleveland', 10, 30)
-print('\n\n======== Scraping more restaurants for Cleveland (starting from downtown) ========')
-scrape_n_pages(CLEVELAND_DOWNTOWN_SEARCH_TERM, 'Cleveland', 60, 30)
+# print('\n\n======== Scraping more restaurants for Cleveland (starting from downtown) ========')
+# scrape_n_pages(CLEVELAND_DOWNTOWN_SEARCH_TERM, 'Cleveland', 60, 30)
