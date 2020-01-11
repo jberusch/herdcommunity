@@ -18,19 +18,32 @@
                 <h2 class="text-left">We believe in uniting communities through <span class="text-muted">shared experience and discovery.</span></h2>
             </div>
             <div class="col-md-5">
-                <img class="img-circle img-fluid" src="https://vignette.wikia.nocookie.net/symbolism/images/4/43/Orange.png/revision/latest?cb=20140818120046">
+
             </div>
         </div>
 
         <hr class="featurette-divider">
         <div class="container">
             <div class="col-md-5">
-                <img class="img-circle img-fluid" src="https://vignette.wikia.nocookie.net/symbolism/images/4/43/Orange.png/revision/latest?cb=20140818120046">
+
             </div>
             <div class="col-md-5">
                 <h2 class="text-right">Explore based on the people who matter most to you.</h2>
             </div>
         </div>
+    </div>
+
+    <div class="container">
+        <hr /><br />
+        <h2>Recommendations</h2><br />
+        {% if recommendations %}
+        {% for r in recommendations %}
+            <div class="col-md-4">
+                <img src="{{ r.img_src }}" class="img-rounded img-thumbnail img-fluid"/>
+                <h3><a href="{{ r.yelp_link }}" target="_blank">{{ r.name }}</a></h3>
+            </div>
+        {% endfor %}
+        {% endif %}
     </div>
 </div>
 {% endblock %}

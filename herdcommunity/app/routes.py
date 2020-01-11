@@ -1,10 +1,12 @@
 # local imports
 from app import app, db
+from app.email import send_email
 from app.forms import SignupForm, LoginForm
 from app.models import User, Destination, Association
 from app.helpers import ulog, delete_log
 
 # library imports
+from random import shuffle
 from operator import attrgetter
 from werkzeug.urls import url_parse
 from flask_login import current_user, login_user, login_required, logout_user
@@ -13,7 +15,27 @@ from flask import render_template, request, redirect, url_for, jsonify, flash
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    recommendations = []
+    if current_user.is_authenticated:
+        dests = Destination.query.all()
+        filter(lambda d: d not in current_user.destinations, dests)
+        # randomly order destinations
+        shuffle(dests)
+
+        i = 0
+        while len(recommendations) < 3 and i < len(dests) - 1:
+            # recommend destination if some friends have visited
+            for friend in current_user.friends:
+                for assoc in friend.destinations:
+                    if dests[i] == assoc.destination:
+                        recommendations.append(dests[i])
+                        i += 1
+                        continue
+            i += 1
+
+    print(recommendations)
+
+    return render_template('index.html', recommendations=recommendations)
 
 @app.route('/list')
 @login_required
@@ -84,6 +106,10 @@ def change_num_visits():
 def delete_destination():
     destination_id = int(request.form['destination_id'])
     dest = Destination.query.get(destination_id)
+
+    print('Deleting')
+    print(dest)
+
     db.session.delete(dest)
     db.session.commit()
     ulog('delete_destination -> user {} deleting destination {}'.format(current_user.username, dest))
@@ -163,10 +189,12 @@ def signup():
         db.session.add(new_user)
         print('registering user: {}'.format(new_user))
         db.session.commit()
-
         # log in new user
         login_user(new_user, remember=True)
         ulog('signup -> new signup by user {}'.format(new_user))
+        # notify admins that new user signed up
+            # NOTE: NOT WORKING
+            # send_email('New User Signup', app.config['ADMINS'][0], ['asroth43@gmail.com'], '', '<h2>New User Signup</h2>')
 
         # after user signs up, send them to page to select friends
         return redirect(url_for('add_friends'))
