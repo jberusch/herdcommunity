@@ -12,25 +12,32 @@ from werkzeug.urls import url_parse
 from flask_login import current_user, login_user, login_required, logout_user
 from flask import render_template, request, redirect, url_for, jsonify, flash
 
+def check_dest_visited_by_user(user_dests, target_dest):
+    for assoc in user_dests:
+        if target_dest == assoc.destination and assoc.num_visits > 0:
+            return True
+    return False
+
 @app.route('/')
 @app.route('/index')
 def index():
     recommendations = []
     if current_user.is_authenticated:
         dests = Destination.query.all()
-        filter(lambda d: d not in current_user.destinations, dests)
         # randomly order destinations
         shuffle(dests)
+
+        # TODO: need to maintain user location
 
         i = 0
         while len(recommendations) < 3 and i < len(dests) - 1:
             # recommend destination if some friends have visited
             for friend in current_user.friends:
-                for assoc in friend.destinations:
-                    if dests[i] == assoc.destination:
-                        recommendations.append(dests[i])
-                        i += 1
-                        continue
+                if check_dest_visited_by_user(friend.destinations, dests[i]) \
+                        and not check_dest_visited_by_user(current_user.destinations, dests[i]):
+                    recommendations.append(dests[i])
+                    i += 1
+                    continue
             i += 1
 
     print(recommendations)
