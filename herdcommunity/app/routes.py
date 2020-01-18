@@ -63,8 +63,10 @@ def list():
     if form.validate_on_submit():
         # user has searched for destination
         search_term = '%{}%'.format(form.dq.data)
+        print(search_term)
         # get destinations by search_term
         destinations_paginated = Destination.query.filter(Destination.name.like(search_term)).order_by(Destination.num_visits.desc()).order_by(Destination.destination_id).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
+        print(destinations_paginated)
 
     else:
         # user has accessed page normally
