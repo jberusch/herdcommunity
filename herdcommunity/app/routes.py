@@ -30,9 +30,11 @@ def index():
         # TODO: need to maintain user location
 
         i = 0
-        while len(recommendations) < 3 and i < len(dests) - 1:
+        while i < len(dests) - 1:
             # recommend destination if some friends have visited
             for friend in current_user.friends:
+                if len(recommendations) < 3:
+                    break
                 if check_dest_visited_by_user(friend.destinations, dests[i]) \
                         and not check_dest_visited_by_user(current_user.destinations, dests[i]):
                     recommendations.append(dests[i])
