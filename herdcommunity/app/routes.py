@@ -115,10 +115,13 @@ def change_num_visits():
 def delete_destination():
     destination_id = int(request.form['destination_id'])
     dest = Destination.query.get(destination_id)
+    print('Deleting', dest)
 
-    print('Deleting')
-    print(dest)
+    # delete any associations destination is in
+    for assoc in dest.users:
+        db.session.delete(assoc)
 
+    # delete destination itself
     db.session.delete(dest)
     db.session.commit()
     ulog('delete_destination -> user {} deleting destination {}'.format(current_user.username, dest))

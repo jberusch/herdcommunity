@@ -392,3 +392,23 @@ list -> page access
 list -> page access
 ---  jberusch  ----  2020-01-18  ---
 list -> page access
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+delete_destination -> user jberusch deleting destination <Destination Barrafina>
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+delete_destination -> user jberusch deleting destination <Destination Flat Iron>
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+delete_destination -> user jberusch deleting destination <Destination Fido>
+---  jberusch  ----  2020-01-18  ---
+list -> page access
