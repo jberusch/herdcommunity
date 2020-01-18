@@ -96,6 +96,11 @@ def change_num_visits():
             # get value to give back to webpage
             new_num_visits = assoc.num_visits
             assoc_found = True
+
+            # if user decreases visits to 0, remove the association entirely
+            if new_num_visits == 0:
+                db.session.delete(assoc)
+
             break
             
     # if no association exists, must be created

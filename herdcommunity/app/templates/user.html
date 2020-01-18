@@ -12,10 +12,12 @@
             </tr>
         </thead>
     {% for assoc in destinations %}
+        {% if assoc.num_visits > 0 %}
         <tr>
             <td>{{ assoc.destination.name }}</td>
             <td class="text-center">{{ assoc.num_visits }}</td>
         </tr>
+        {% endif %}
     {% endfor %}
     </table>
 </div>

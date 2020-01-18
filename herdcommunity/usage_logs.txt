@@ -412,3 +412,19 @@ list -> page access
 delete_destination -> user jberusch deleting destination <Destination Fido>
 ---  jberusch  ----  2020-01-18  ---
 list -> page access
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+user -> page access for username jberusch
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+user -> page access for username jberusch
+---  jberusch  ----  2020-01-18  ---
+list -> page access
+---  jberusch  ----  2020-01-18  ---
+user -> page access for username jberusch
