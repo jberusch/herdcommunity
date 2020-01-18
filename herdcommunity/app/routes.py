@@ -23,7 +23,7 @@ def check_dest_visited_by_user(user_dests, target_dest):
 def index():
     recommendations = []
     if current_user.is_authenticated:
-        dests = Destination.query.all()
+        dests = Destination.query.filter_by(region=current_user.region).all()
         # randomly order destinations
         shuffle(dests)
 
@@ -53,7 +53,12 @@ def list():
     ulog('list -> page access')
     form = SearchForm()
     page_number = request.args.get('page', 1, type=int)
-    region = request.args.get('region', 'Nashville')
+    region = request.args.get('region', current_user.region)
+    
+    # update user's region if they selected a different one
+    if region != current_user.region:
+        current_user.region = region
+        db.session.commit()
     
     if form.validate_on_submit():
         # user has searched for destination

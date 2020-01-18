@@ -28,6 +28,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), index=True, unique=True)
     name = db.Column(db.String(120))
     email = db.Column(db.String(120), index=True, unique=True)
+    region = db.Column(db.String(50), index=True)
     destinations = db.relationship('Association', back_populates='user')
     friends = db.relationship('User',
         secondary=friendship_identifier,
