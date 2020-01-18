@@ -11,6 +11,7 @@ BASE_URL = 'https://www.yelp.com/'
 NASHVILLE_SEARCH_TERM = 'search?find_desc=&find_near=vanderbilt-university-nashville-4&start=' # needs multiple of 10 (starting at 0) added to end
 CLEVELAND_SHAKER_SEARCH_TERM = 'search?find_desc=restaurants&find_loc=Shaker%20Heights%2C%20OH&ns=1&start='
 CLEVELAND_DOWNTOWN_SEARCH_TERM = 'search?find_desc=Restaurants&find_loc=Cleveland%2C%20OH&ns=1&start='
+LONDON_COVENT_GARDEN_SEARCH_TERM= 'search?find_desc=Restaurants&find_loc=Covent%20Garden%2C%20London%2C%20United%20Kingdom&start='
 
 # scrape one page of results (they're paginated)
 def scrape_one_page(page_content, region):
@@ -59,7 +60,10 @@ def scrape_one_page(page_content, region):
 
 def scrape_n_pages(search_term, region, n, step):
     for i in range(n):
-        resp = requests.get(BASE_URL + search_term + str(i * step), timeout=5)
+        try:
+            resp = requests.get(BASE_URL + search_term + str(i * step), timeout=20)
+        except requests.exceptions.ReadTimeout:
+            print("\n\n<<<<<<<<<<<<<< timeout occured on page i = {} >>>>>>>>>>>>>>>>>", i)
         content = BeautifulSoup(resp.content, "html.parser")
         scrape_one_page(content, region)
     db.session.commit()
@@ -70,3 +74,5 @@ def scrape_n_pages(search_term, region, n, step):
 # scrape_n_pages(CLEVELAND_SHAKER_SEARCH_TERM, 'Cleveland', 10, 30)
 # print('\n\n======== Scraping more restaurants for Cleveland (starting from downtown) ========')
 # scrape_n_pages(CLEVELAND_DOWNTOWN_SEARCH_TERM, 'Cleveland', 60, 30)
+print('\n\n======== Scraping restaurants for London (starting from Covent Garden) ========')
+scrape_n_pages(LONDON_COVENT_GARDEN_SEARCH_TERM, 'London', 98, 30)
