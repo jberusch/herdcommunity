@@ -1,7 +1,7 @@
 # local imports
 from app import app, db
 from app.email import send_email
-from app.forms import SignupForm, LoginForm
+from app.forms import SignupForm, LoginForm, SearchForm
 from app.models import User, Destination, Association
 from app.helpers import ulog, delete_log
 
@@ -46,16 +46,32 @@ def index():
 
     return render_template('index.html', recommendations=recommendations)
 
-@app.route('/list')
+@app.route('/list', methods=['GET', 'POST'])
 @login_required
 def list():
     # log usage
     ulog('list -> page access')
-
+    form = SearchForm()
     page_number = request.args.get('page', 1, type=int)
     region = request.args.get('region', 'Nashville')
-    destinations_paginated = Destination.query.filter_by(region=region).order_by(Destination.num_visits.desc()).order_by(Destination.destination_id).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
     
+    if form.validate_on_submit():
+        # user has searched for destination
+        search_term = '%{}%'.format(form.dq.data)
+        # get destinations by search_term
+        destinations_paginated = Destination.query.filter(Destination.name.like(search_term)).order_by(Destination.num_visits.desc()).order_by(Destination.destination_id).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
+
+    else:
+        # user has accessed page normally
+        # get destinations by region
+        destinations_paginated = Destination.query.filter_by(region=region).order_by(Destination.num_visits.desc()).order_by(Destination.destination_id).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
+        
+    # create next and previous URLs for pagination
+    next_url = url_for('list', page=destinations_paginated.next_num, region=region) \
+        if destinations_paginated.has_next else None
+    prev_url = url_for('list', page=destinations_paginated.prev_num, region=region) \
+        if destinations_paginated.has_prev else None
+
     # compile visit numbers for each destination
     destinations = destinations_paginated.items
     context = []
@@ -69,14 +85,8 @@ def list():
                 tmp['num_visits_by_friends'] += assoc.num_visits
         context.append(tmp)
 
-    # create next and previous URLs for pagination
-    next_url = url_for('list', page=destinations_paginated.next_num, region=region) \
-        if destinations_paginated.has_next else None
-    prev_url = url_for('list', page=destinations_paginated.prev_num, region=region) \
-        if destinations_paginated.has_prev else None
-
     return render_template('list.html', destinations=enumerate(destinations), context=context, region=region, current_user=current_user,
-                            next_url=next_url, prev_url=prev_url, page_number=page_number, num_dests=app.config['DESTINATIONS_PER_PAGE'])
+                            next_url=next_url, prev_url=prev_url, page_number=page_number, num_dests=app.config['DESTINATIONS_PER_PAGE'], form=form)
 
 # change the number of times current user has visited a destination
 # triggered by +/- buttons in list.html
@@ -152,7 +162,6 @@ def check_user_exists(username):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
     form = LoginForm()
     if form.validate_on_submit():
         # if user is already logged in
@@ -180,7 +189,7 @@ def login():
 
     return render_template('login.html', form=form)
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/signup')
 def signup():
     form = SignupForm()
     if form.validate_on_submit():

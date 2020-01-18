@@ -1,3 +1,4 @@
+{% import 'bootstrap/wtf.html' as wtf %}
 {% extends "base.html" %}
 
 {% block app_content %}
@@ -26,7 +27,16 @@
     }
 </script>
 <div class="container">
-    <div>
+    <div class="container row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+            <a href="{{ url_for('list', region=region) }}"><button type="button" class="btn btn-light float-right">Back</button></a>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+
+   <div class="container" style="margin-top: 20px">
         <a href="{{ url_for('list', region='Nashville') }}" style="text-decoration: {{ 'underline' if region == 'Nashville' else 'none' }};">Nashville</a> | 
         <a href="{{ url_for('list', region='Cleveland') }}" style="text-decoration: {{ 'underline' if region == 'Cleveland' else 'none' }};">Cleveland</a> |
         <a href="{{ url_for('list', region='London') }}" style="text-decoration: {{ 'underline' if region == 'London' else 'none' }};">London</a>
