@@ -33,7 +33,7 @@ def index():
         while i < len(dests) - 1:
             # recommend destination if some friends have visited
             for friend in current_user.friends:
-                if len(recommendations) < 3:
+                if len(recommendations) >= 3:
                     break
                 if check_dest_visited_by_user(friend.destinations, dests[i]) \
                         and not check_dest_visited_by_user(current_user.destinations, dests[i]):
