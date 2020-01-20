@@ -626,3 +626,13 @@ list -> page access
 add_friends -> page access
 ---  sdsdf  ----  2020-01-20  ---
 add_friends -> page access
+---  sdsdf  ----  2020-01-20  ---
+list -> page access
+---  jberusch  ----  2020-01-20  ---
+login -> login by user <User Joe Berusch>
+---  jberusch  ----  2020-01-20  ---
+list -> page access
+---  jberusch  ----  2020-01-20  ---
+user -> page access for username asroth
+---  jberusch  ----  2020-01-20  ---
+user -> page access for username asroth
