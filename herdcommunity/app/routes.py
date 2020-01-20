@@ -194,7 +194,7 @@ def login():
 
     return render_template('login.html', form=form)
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
@@ -222,7 +222,7 @@ def signup():
         db.session.commit()
         # log in new user
         login_user(new_user, remember=True)
-        ulog('signup -> new signup by user {}'.format(new_user))
+        # ulog('signup -> new signup by user {}'.format(new_user))
         # notify admins that new user signed up
             # NOTE: NOT WORKING
             # send_email('New User Signup', app.config['ADMINS'][0], ['asroth43@gmail.com'], '', '<h2>New User Signup</h2>')
