@@ -47,8 +47,6 @@ def index():
 @app.route('/list', methods=['GET', 'POST'])
 @login_required
 def list():
-    # log usage
-    ulog('list -> page access')
     form = SearchForm()
     page_number = request.args.get('page', 1, type=int)
     region = request.args.get('region', current_user.region)
@@ -175,8 +173,9 @@ def login():
         # log in user, if they exist
         user = User.query.filter_by(username=form.username.data).first()
         if user is None:
-            print('Could not find user with username {}'.format(form.username.data))
-            # TODO: flash error message
+            msg = 'Could not find user with username {}'.format(form.username.data)            
+            print(msg)
+            flash(msg)
             return redirect(url_for('login'))
         login_user(user, remember=True)
 
