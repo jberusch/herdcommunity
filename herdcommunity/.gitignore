@@ -1,3 +1,4 @@
 usage_logs.txt
 app/__pycache__
 *.pyc
+.hidden

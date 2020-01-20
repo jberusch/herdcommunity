@@ -636,3 +636,5 @@ list -> page access
 user -> page access for username asroth
 ---  jberusch  ----  2020-01-20  ---
 user -> page access for username asroth
+---  jberusch  ----  2020-01-20  ---
+add_friends -> page access

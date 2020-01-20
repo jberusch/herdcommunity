@@ -6,6 +6,7 @@ from app.models import User, Destination, Association
 from app.helpers import ulog, delete_log
 
 # library imports
+import os
 from random import shuffle
 from operator import attrgetter
 from werkzeug.urls import url_parse
@@ -27,8 +28,6 @@ def index():
         # randomly order destinations
         shuffle(dests)
 
-        # TODO: need to maintain user location
-
         i = 0
         while i < len(dests) - 1:
             # recommend destination if some friends have visited
@@ -43,7 +42,6 @@ def index():
             i += 1
 
     print(recommendations)
-
     return render_template('index.html', recommendations=recommendations)
 
 @app.route('/list', methods=['GET', 'POST'])
@@ -178,13 +176,12 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None:
             print('Could not find user with username {}'.format(form.username.data))
-            ulog('login -> failed login by username {}'.format(form.username.data))
             # TODO: flash error message
             return redirect(url_for('login'))
         login_user(user, remember=True)
 
         # log usage
-        ulog('login -> login by user {}'.format(user))
+        print('login by user {}'.format(user))
         
         # redirect user either to list or to previous page
         next_page = request.args.get('next')
@@ -196,8 +193,13 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    # print('-------------\nemail:', app.config['MAIL_PASSWORD'])
+    # print(os.environ.get('MAIL_PASSWORD'))
+    # print(os.getkey())
+
     form = SignupForm()
     if form.validate_on_submit():
+
         # TODO: if user already exists, send them straight to list
         print('Attempting to sign in user with information: ', form.username.data, form.email.data, form.name.data)
 
@@ -217,15 +219,15 @@ def signup():
         
         # register user in database
         new_user = User(username=form.username.data, name=form.name.data, email=form.email.data, friends=[], destinations=[])
-        db.session.add(new_user)
         print('registering user: {}'.format(new_user))
+        db.session.add(new_user)
         db.session.commit()
         # log in new user
         login_user(new_user, remember=True)
 
         # notify admins that new user signed up
             # NOTE: NOT WORKING
-            # send_email('New User Signup', app.config['ADMINS'][0], ['asroth43@gmail.com'], '', '<h2>New User Signup</h2>')
+            # send_email('New User Signup', app.config['ADMINS'][0], ['asroth43@gmail.com', 'joeberusch@gmail.com'], '', '<h2>New User Signup</h2>')
 
         # after user signs up, send them to page to select friends
         return redirect(url_for('add_friends'))
@@ -240,9 +242,6 @@ def logout():
 @app.route('/add_friends', methods=['GET', 'POST'])
 @login_required
 def add_friends():
-    # log usage
-    ulog('add_friends -> page access')
-
     users = User.query.all()
     users = filter(lambda u: u.user_id != current_user.user_id, users)
 
@@ -251,7 +250,6 @@ def add_friends():
         friend_ids = request.form.getlist('friend_checkbox')
         for friend_id in friend_ids:
             friend = User.query.get(int(friend_id))
-            ulog('add_friends -> user {} added friend {}'.format(current_user, friend))
             print('adding friend ', friend_id)
             current_user.add_friend(friend)
 
