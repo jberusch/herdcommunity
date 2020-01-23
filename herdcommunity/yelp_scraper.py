@@ -61,8 +61,9 @@ def scrape_one_page(page_content, region):
 
 def scrape_n_pages(search_term, region, n, step):
     for i in range(n):
+        print('\n\n------------- scraping restaurants for page {} ------------'.format(i+1))
         try:
-            resp = requests.get(BASE_URL + search_term + str(i * step), timeout=20)
+            resp = requests.get(BASE_URL + search_term + str(i * step), timeout=10)
         except requests.exceptions.ReadTimeout:
             print("\n\n<<<<<<<<<<<<<< timeout occured on page i = {} >>>>>>>>>>>>>>>>>", i)
         content = BeautifulSoup(resp.content, "html.parser")
