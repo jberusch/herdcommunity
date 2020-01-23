@@ -79,4 +79,4 @@ def scrape_n_pages(search_term, region, n, step):
 # print('\n\n======== Scraping restaurants for London (starting from Covent Garden) ========')
 # scrape_n_pages(LONDON_COVENT_GARDEN_SEARCH_TERM, 'London', 98, 30)
 print('\n\n======== Scraping restaurants for London (starting from total London link) ========')
-scrape_n_pages(LONDON_ALL_SEARCH_TERM, 'London', 652, 30)
+scrape_n_pages(LONDON_ALL_SEARCH_TERM, 'London', 33, 30)
