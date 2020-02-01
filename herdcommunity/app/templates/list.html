@@ -55,11 +55,11 @@
                 <p><strong>Friends Visited</strong> {{ context[index].friends_visited|length }}</p>
                 <p><strong>Times Visited by Friends</strong> {{ context[index].num_visits_by_friends }}</p>
                 <p><strong>Visited By</strong> {{ 'Nobody :(' if context[index].friends_visited == [] else '' }}</p>
-                <ul>
+                <ul style="list-style-type: none;">
                 {% for friend in context[index].friends_visited %}
                     <li><a href="{{ url_for('user', username=friend.username if friend.username else '') }}">{{ friend.name }}</a></li>
                 {% endfor %}
-                </ul>
+                </ul st>
             </td st>
             <td>
                 <p><strong>Times You've Visited</strong>

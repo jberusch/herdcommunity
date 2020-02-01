@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="container">
+    <h2>Users: {{ metrics.num_users }}</h2>
+    <h2>Friends / User: {{ metrics.num_friends_per_user }}</h2>
+    <h2>Destinations: {{ metrics.num_dests }}</h2>
+    <h2>% of Desinations w/ Visits: {{ metrics.percent_dests_with_visits }}%</h2>
+</div>
+{% endblock %}

@@ -6,8 +6,8 @@ from app.models import User, Destination, Association
 from app.helpers import ulog, delete_log
 
 # library imports
-import os
 from random import shuffle
+from functools import reduce
 from operator import attrgetter
 from werkzeug.urls import url_parse
 from flask_login import current_user, login_user, login_required, logout_user
@@ -28,6 +28,8 @@ def index():
         # randomly order destinations
         shuffle(dests)
 
+        # TODO: need to maintain user location
+
         i = 0
         while i < len(dests) - 1:
             # recommend destination if some friends have visited
@@ -42,11 +44,14 @@ def index():
             i += 1
 
     print(recommendations)
+
     return render_template('index.html', recommendations=recommendations)
 
 @app.route('/list', methods=['GET', 'POST'])
 @login_required
 def list():
+    # log usage
+    ulog('list -> page access')
     form = SearchForm()
     page_number = request.args.get('page', 1, type=int)
     region = request.args.get('region', current_user.region)
@@ -59,8 +64,10 @@ def list():
     if form.validate_on_submit():
         # user has searched for destination
         search_term = '%{}%'.format(form.dq.data)
+        print(search_term)
         # get destinations by search_term
-        destinations_paginated = Destination.query.filter_by(region=region).filter(Destination.name.ilike(search_term)).order_by(Destination.num_visits.desc()).order_by(Destination.destination_id).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
+        destinations_paginated = Destination.query.filter(Destination.name.like(search_term)).order_by(Destination.num_visits.desc()).order_by(Destination.destination_id).paginate(page_number, app.config['DESTINATIONS_PER_PAGE'], False)
+        print(destinations_paginated)
 
     else:
         # user has accessed page normally
@@ -87,7 +94,7 @@ def list():
         context.append(tmp)
 
     return render_template('list.html', destinations=enumerate(destinations), context=context, region=region, current_user=current_user,
-                            next_url=next_url, prev_url=prev_url, page_number=page_number, num_dests=app.config['DESTINATIONS_PER_PAGE'], form=form)
+                            next_url=next_url, prev_url=prev_url, page_number=page_number, num_dests=app.config['DESTINATIONS_PER_PAGE'], form=form, ADMINS=app.config['ADMINS'])
 
 # change the number of times current user has visited a destination
 # triggered by +/- buttons in list.html
@@ -102,6 +109,7 @@ def change_num_visits():
     new_num_visits = 1
     for assoc in dest.users:
         if assoc.user.user_id == current_user.user_id:
+            print('here')
             # update number of visits
             assoc.num_visits = max(assoc.num_visits + value, 0) # ensure value can't go below 0
             # get value to give back to webpage
@@ -111,11 +119,11 @@ def change_num_visits():
             # if user decreases visits to 0, remove the association entirely
             if new_num_visits == 0:
                 db.session.delete(assoc)
-
             break
             
     # if no association exists, must be created
     if not assoc_found:
+        new_num_visits = max(value, 0)
         new_assoc = Association(num_visits=max(value, 0))
         new_assoc.user = current_user
         dest.users.append(new_assoc)
@@ -151,8 +159,9 @@ def user(username):
 
     user = User.query.filter_by(username=username).first_or_404()
     destinations = sorted(user.destinations, key=attrgetter('num_visits'), reverse=True)
+    num_friends = len(user.friends)
     
-    return render_template('user.html', user=user, destinations=destinations)
+    return render_template('user.html', user=user, destinations=destinations, num_friends=num_friends)
 
 def check_user_exists(username):
     users = User.query.all()
@@ -173,14 +182,14 @@ def login():
         # log in user, if they exist
         user = User.query.filter_by(username=form.username.data).first()
         if user is None:
-            msg = 'Could not find user with username {}'.format(form.username.data)            
+            msg = 'Could not find user with username {}'.format(form.username.data)
             print(msg)
             flash(msg)
             return redirect(url_for('login'))
         login_user(user, remember=True)
 
         # log usage
-        print('login by user {}'.format(user))
+        ulog('login -> login by user {}'.format(user))
         
         # redirect user either to list or to previous page
         next_page = request.args.get('next')
@@ -190,15 +199,10 @@ def login():
 
     return render_template('login.html', form=form)
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/signup')
 def signup():
-    # print('-------------\nemail:', app.config['MAIL_PASSWORD'])
-    # print(os.environ.get('MAIL_PASSWORD'))
-    # print(os.getkey())
-
     form = SignupForm()
     if form.validate_on_submit():
-
         # TODO: if user already exists, send them straight to list
         print('Attempting to sign in user with information: ', form.username.data, form.email.data, form.name.data)
 
@@ -218,15 +222,15 @@ def signup():
         
         # register user in database
         new_user = User(username=form.username.data, name=form.name.data, email=form.email.data, friends=[], destinations=[])
-        print('registering user: {}'.format(new_user))
         db.session.add(new_user)
+        print('registering user: {}'.format(new_user))
         db.session.commit()
         # log in new user
         login_user(new_user, remember=True)
-
+        ulog('signup -> new signup by user {}'.format(new_user))
         # notify admins that new user signed up
             # NOTE: NOT WORKING
-            # send_email('New User Signup', app.config['ADMINS'][0], ['asroth43@gmail.com', 'joeberusch@gmail.com'], '', '<h2>New User Signup</h2>')
+            # send_email('New User Signup', app.config['ADMIN_EMAILS'][0], ['asroth43@gmail.com'], '', '<h2>New User Signup</h2>')
 
         # after user signs up, send them to page to select friends
         return redirect(url_for('add_friends'))
@@ -241,6 +245,9 @@ def logout():
 @app.route('/add_friends', methods=['GET', 'POST'])
 @login_required
 def add_friends():
+    # log usage
+    ulog('add_friends -> page access')
+
     users = User.query.all()
     users = filter(lambda u: u.user_id != current_user.user_id, users)
 
@@ -249,6 +256,7 @@ def add_friends():
         friend_ids = request.form.getlist('friend_checkbox')
         for friend_id in friend_ids:
             friend = User.query.get(int(friend_id))
+            ulog('add_friends -> user {} added friend {}'.format(current_user, friend))
             print('adding friend ', friend_id)
             current_user.add_friend(friend)
 
@@ -261,3 +269,38 @@ def add_friends():
 
     return render_template('add_friends.html', users=users, 
                             current_friends=current_user.friends if current_user.friends else [])
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    # double check user is an admin
+    if not current_user.username in app.config['ADMINS']:
+        return "Go Away!"
+
+    # create dict of metrics to display
+    users = User.query.all()
+    num_users = len(users)
+    num_friends = 0
+    for u in users:
+        num_friends += len(u.friends)
+    num_friends_per_user = num_users / num_friends
+
+    dests = Destination.query.all()
+    num_dests = len(dests)
+    num_visits = 0
+    num_dests_with_visits = 0
+    for d in dests:
+        num_visits += len(d.users)
+        if len(d.users) > 0:
+            num_dests_with_visits += 1
+    percent_dests_with_visits = num_dests_with_visits / num_dests * 100
+
+    metrics = {
+        'num_users': num_users,
+        'num_friends_per_user': num_friends_per_user,
+        'num_dests': num_dests,
+        'percent_dests_with_visits': percent_dests_with_visits
+    }
+
+
+    return render_template('dashboard.html', metrics=metrics)

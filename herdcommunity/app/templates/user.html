@@ -2,7 +2,15 @@
 
 {% block app_content %}
 <div class="container">
-    <h1>{{ user.name }}</h1>
+    <div class="container row text-left">
+        <div class="col-xs-2">
+            <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" class="img-rounded img-thumbnail img-fluid"/>
+        </div>
+        <div class="col-xs-3">
+            <h1>{{ user.name }}</h1>
+            <h3><strong>{{ num_friends }}</strong> Following</h3>    
+        </div>
+    </div>
     <hr>
     <table class="table table-hover table-striped">
         <thead>
